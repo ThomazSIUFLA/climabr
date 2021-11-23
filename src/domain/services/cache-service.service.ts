@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 export class CacheService {
 
   constructor(private storage: Storage) {
+    // Cria database
     this.storage.create()
   }
 
