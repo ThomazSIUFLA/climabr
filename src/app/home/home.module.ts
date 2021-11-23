@@ -1,3 +1,4 @@
+import { CacheService } from 'src/domain/services/cache-service.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';

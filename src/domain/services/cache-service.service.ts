@@ -1,47 +1,44 @@
 import { City } from './../entities/city';
-import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/map';
 import { Storage } from '@ionic/storage';
-import { DatePipe } from '@angular/common';
 
-@Injectable()
 export class CacheService {
 
-  constructor(private storage: Storage) { }
+  constructor(private storage: Storage) {
+    this.storage.create()
+  }
 
+  // Insere cidade
   public insert(city: City) {
+    // Identificador único
     let key = city.id.toString()
     return this.save(key, city);
   }
 
-  public update(key: string, city: City) {
-    return this.save(key, city);
-  }
-
+  // Salva objeto no storage, usando uma chave única
   private save(key: string, city: City) {
+    console.log('Salvando...', key, city)
     return this.storage.set(key, city);
   }
 
+  // Remove objeto do local Storage
   public remove(key: string) {
     return this.storage.remove(key);
   }
 
+  // retorna cidades em cache
   public getAll() {
+    let cidades: City[] = [];
 
-    let citys: CityList[] = [];
-
-    return this.storage.forEach((value: City, key: string, iterationNumber: Number) => {
-      let city = new CityList();
-      city.key = key;
-      city.city = value;
-      citys.push(city);
+    // Retorna lista com cidades armazenadas no localStorage
+    return this.storage.forEach((value: City) => {
+      cidades.push(value)
     })
-      .then(() => {
-        return Promise.resolve(citys);
-      })
-      .catch((error) => {
-        return Promise.reject(error);
-      });
+    .then(() => {
+      return Promise.resolve(cidades);
+    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
   }
 }
 

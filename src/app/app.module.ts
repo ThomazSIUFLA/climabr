@@ -14,15 +14,23 @@ import { ApiWeatherRepository } from 'src/data/api-weather-repository';
 import { CacheService } from 'src/domain/services/cache-service.service';
 import { Storage } from '@ionic/storage';
 
-const createSearchCityService = () => {
-  return new SearchCityService(new LocalCityRepository());
+const createSearchCityService = (cacheService: CacheService) => {
+  return new SearchCityService(
+    new LocalCityRepository(),
+    cacheService
+    );
 };
 
-const createLoadWeatherService = (http: HttpClient, storage: Storage) => {
+// Factory cache service
+const createCacheService = (storage: Storage) =>{
+  return new CacheService(storage)
+}
+
+const createLoadWeatherService = (http: HttpClient, cacheService: CacheService) => {
   return new LoadWeatherService(
     new LocalCityRepository(),
     new ApiWeatherRepository(http),
-    new CacheService(storage)
+    cacheService
   );
 };
 
@@ -40,14 +48,22 @@ const createLoadWeatherService = (http: HttpClient, storage: Storage) => {
     {
       provide: SearchCityService,
       useFactory: createSearchCityService,
+      deps: [CacheService]
     },
     {
       provide: LoadWeatherService,
       useFactory: createLoadWeatherService,
-      deps: [HttpClient],
+      deps: [HttpClient, CacheService],
     },
-    CacheService
+    // provider do serviço
+    {
+      provide: CacheService,
+      useFactory: createCacheService,
+      deps: [Storage],
+    },
+    Storage
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+}
